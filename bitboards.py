@@ -14,7 +14,7 @@ from ctypes import c_ulonglong as ull
 from ctypes import c_uint as uint
 import ctypes
 
-from typing import Tuple, Union
+from typing import List, Tuple, Union
 
 
 
@@ -140,6 +140,28 @@ def print_bitboard(bitboard: ull) -> None:
 
         print(i + 1)
     print("A B C D E F G H")
+
+
+def attacked_tiles_64_pos(bitboard: ull) -> List[Tuple[int, int]]:
+    """ A helper function used to get the sq64 based indices of attacked squares.
+    
+    :param bitboard: The ctypes.c_ulonglong representing the attacked squares.
+    :returns: A list of tuples containing the ranks and files of the attacked squares.
+    """
+    shiftMe = ull(1) # Unsigned 64 bit int to be shifted.
+    sq = ull(0) # 120sq index.
+    sq64 = ull(0) # sq64 value to bitshift.
+    lst = [] # The output list containing attacked tiles
+
+    for i in range(7, -1, -1): # Loop from top to bottom.
+        for j in range(8): # Loop left to right.
+            sq = data.file_rank_to_index(i * 8 + j)
+            sq64 = square120ToSquare64[sq]
+
+            if ((shiftMe.value << sq64) & bitboard.value):
+                lst.append((j, (7 - i)))
+
+    return lst
 
 
 def pop_bit(bitboard: ull) -> Tuple[int, ull] :

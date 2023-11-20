@@ -198,6 +198,9 @@ class Move():
         # Change who's turn it is
         gameBoard.turn = int(not gameBoard.turn)
 
+        # Update the attacked tiles.
+        artifacts.set_attacked_tiles(gameBoard)
+
         self.reset_move()        
     
 
@@ -246,6 +249,9 @@ class Move():
 
             # Update artifact images for pieces.
             artifacts.set_piece_imgs_positions(gameBoard)
+
+            # Update the attacked tiles.
+            artifacts.set_attacked_tiles(gameBoard)
     
 
     def handle_prom(self, gameBoard: board.Board(), promPiece: int) -> None:
@@ -263,6 +269,9 @@ class Move():
         gameBoard.turn = int(not gameBoard.turn)
 
         artifacts.set_piece_imgs_positions(gameBoard)
+
+        # Update the attacked tiles.
+        artifacts.set_attacked_tiles(gameBoard)
 
         self.update_history(gameBoard)
         self.reset_move()

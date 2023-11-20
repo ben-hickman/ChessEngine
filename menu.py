@@ -11,9 +11,10 @@ class Menu():
     """ A static class containing information related to the settings of the game.
         Audio, resolution, and fps limit reside here.
     """
-    mute = False #Mute bool
-    fullscreen = False #Fullscreen bool
-    settingsPage = False #bool to show settings page
+    mute = False # Mute bool
+    fullscreen = False # Fullscreen bool
+    settingsPage = False # bool to show settings page
+    showAttacks = False # bool to toggle attacked squares
     res = enums.Resolution.RES_1920_1080.value
     resIndex = -1
     fpsLimit = 144
@@ -36,6 +37,10 @@ def toggle_settings_page() -> None:
     """
     Menu.settingsPage = not Menu.settingsPage
 
+def toggle_show_attacks() -> None:
+    """ Setter to show/hide attacks.
+    """
+    Menu.showAttacks = not Menu.showAttacks
 
 def set_res(index) -> None:
     """ Setter to select a resolution for the application.

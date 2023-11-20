@@ -7,6 +7,8 @@
 import data
 import enums
 import board
+import attacks
+import bitboards
 
 import os
 import pygame
@@ -29,7 +31,9 @@ ART_SIZES = {
     "hamburger": (75, 75),
     "home": (75, 75),
     "mute": (75, 75),
+    "showAttacks": (75, 75),
     "sideNavBar": (75, 1080),
+    "slash": (75, 75),
     "speaker": (75, 75),
     
     # PGN
@@ -61,7 +65,9 @@ ART_POS = {
     "hamburger": (1845, 0),
     "home": (1845, 0),
     "mute": (1845, 75),
+    "showAttacks": (1845, 150),
     "sideNavBar": (1845, 0),
+    "slash": (1845, 150),
     "speaker": (1845, 75),
     
     # PGN
@@ -110,6 +116,8 @@ def import_img() -> None:
 
         "hamburger": "hamburger_menu.png",
         "home": "home_icon.png",
+        "showAttacks": "magnifying_glass.png",
+        "slash": "slash.png",
         "mute": "mute_icon.png",
         "speaker": "speaker_icon.png",
     }
@@ -172,9 +180,11 @@ class Artifacts():
     hamburgerSize = hamburgerPos = None
     homeSize = homePos = None
     muteSize = mutePos = None
+    showAttacksSize = showAttacksPos = None
     sideNavBarSize = sideNavBarPos = None
+    slashSize = slashPos = None
     speakerSize = speakerPos = None
-
+    
     # PGN
     pgnBoxSize = pgnBoxPos = None
     pgnHeaderFont = pgnHeaderPos = None
@@ -192,6 +202,9 @@ class Artifacts():
     scaledImgs = {}
     pieceImgsPos = {}
     sounds = {}
+
+    # Lists
+    attackedTiles = []
 
 
 def calculate_resize(screenWidth, screenHeight, gameBoard) -> None:
@@ -218,6 +231,7 @@ def calculate_resize(screenWidth, screenHeight, gameBoard) -> None:
     update_pieces(gameBoard)
     update_imgs()
     set_piece_imgs_positions(gameBoard)
+    set_attacked_tiles(gameBoard)
 
 
 def resize_misc_attrs(screenWidth, screenHeight, currDim, baseDim) -> None:
@@ -418,3 +432,16 @@ def set_piece_imgs_positions(gameBoard: board.Board()) -> None:
 
             else:
                 Artifacts.pieceImgsPos.pop(sq, None)
+
+
+def set_attacked_tiles(gameBoard: board.Board()) -> None:
+    """ Set the positions for squares currently attacked by opponent.
+
+    :param gameBoard: The board object including information for each successive turn.
+    """
+    bitboard = attacks.get_attacked_bitboard(gameBoard)
+    positions = bitboards.attacked_tiles_64_pos(bitboard)
+
+    Artifacts.attackedTiles.clear()
+    for position in positions:
+        Artifacts.attackedTiles.append((position[0] * Artifacts.fromTileSize[0], position[1] * Artifacts.fromTileSize[1]))

@@ -65,6 +65,10 @@ def draw_game_state(screen: pygame.Surface, gameBoard: board.Board, makeMove: mo
     # Draw the chess board onto the screen, starting from top left corner Already scaled.
     blit_source(screen, art.scaledImgs["board"], art.boardPos)
 
+    # Highlight attack squares on the board.
+    if menu.Menu.showAttacks:
+        draw_attacked_tiles(screen)
+
     # If the User has selected a previous square, highlight it.
     if 21 <= makeMove.from120 <= 98:
         draw_rect(screen, art.fromTilePos, art.fromTileSize, data.COLOUR_CLOUDY_BLUE)
@@ -97,6 +101,13 @@ def draw_game_state(screen: pygame.Surface, gameBoard: board.Board, makeMove: mo
     # Blit the speaker icon onto the navigation bar.
     else:
         blit_source(screen, art.scaledImgs["speaker"], art.speakerPos)
+
+    # Blit the show moves button onto the navigation bar.
+    if menu.Menu.showAttacks:
+        blit_source(screen, art.scaledImgs["showAttacks"], art.showAttacksPos)
+    else:
+        blit_source(screen, art.scaledImgs["showAttacks"], art.showAttacksPos)
+        blit_source(screen, art.scaledImgs["slash"], art.slashPos)
 
     # If user selected settingsPage, display it.
     if menu.Menu.settingsPage:
@@ -135,6 +146,17 @@ def draw_pieces(screen: pygame.Surface) -> None:
     """
     for key in art.pieceImgsPos.keys():
         blit_source(screen, *art.pieceImgsPos[key])
+
+
+def draw_attacked_tiles(screen: pygame.Surface) -> None:
+    """ Draw each of the tiles attacked by opponents piece.
+
+    :param screen: The surface to be drawn onto.
+    """
+    for tilePos in art.attackedTiles:
+        rectSurface = pygame.Surface(art.fromTileSize, pygame.SRCALPHA)
+        rectSurface.fill(data.COLOUR_RED_CLEAR)
+        screen.blit(rectSurface, tilePos)
 
 
 def render_settings_save(screen: pygame.Surface) -> None:
@@ -294,7 +316,7 @@ def main():
                 menu.toggle_settings_page()
 
             # If there is registered mouse input, and it's a left-click.
-            if event.type == MOUSEBUTTONDOWN and event.button == 1:
+            if data.left_click(event):
 
                 # Get the current mouse mousePos.
                 mousePos = pygame.mouse.get_pos()
@@ -333,6 +355,10 @@ def main():
                     # If hamburger menu selected, toggle settings vs main screen.
                     elif artifacts.is_clicked("hamburger", mousePos):
                         menu.toggle_settings_page()
+
+                    # If showAttacks selected, toggle it.
+                    elif artifacts.is_clicked("showAttacks", mousePos):
+                        menu.toggle_show_attacks()
                         
                 # If on the settings page.
                 else:
@@ -370,7 +396,7 @@ def main():
             # If window resized, recompute artifacts.
             elif event.type == VIDEORESIZE:
                 artifacts.calculate_resize(screen.get_width(), screen.get_height(), gameBoard)
-            
+
             # Draw the current game state.
             draw_game_state(screen, gameBoard, makeMove, settingsScreen)
 
