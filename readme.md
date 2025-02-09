@@ -5,6 +5,7 @@ This allows for easier searching when generating moves as the 120 index includes
 
 The following mapping shows how an index translated from the 64 based structure converts to the 120 based structure. Please note that the white pieces begin on the lower indices (index 0 for 64 based, and index 21 for 120 based.)
 
+```
 square64ToSquare120:
                         White
         A    B    C    D    E    F    G    H
@@ -53,3 +54,4 @@ The full board with out of bounds tiles is visualized as such:
    100| 101| 102| 103| 104| 105| 106| 107| 108| 109
    --   --   --   --   --   --   --   --   --   --
    110| 111| 112| 113| 114| 115| 116| 117| 118| 119
+```
